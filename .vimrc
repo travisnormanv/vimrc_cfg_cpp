@@ -8,6 +8,7 @@ set noexpandtab
 set colorcolumn=110
 highlight ColorColumn ctermbg=darkgray
 
+
 " set the runtime path to include Vundle and initialize
 set rtp+=~/.vim/bundle/Vundle.vim
 call vundle#begin()
@@ -23,8 +24,8 @@ Plugin 'preservim/nerdtree'
 " YouCompleteMe
 Plugin 'ycm-core/YouCompleteMe'  
 
-" vim-cmake
-Plugin 'vhdirk/vim-cmake'
+" asyncrun
+Plugin 'skywind3000/asyncrun.vim'
 
 " The following are examples of different formats supported.
 " Keep Plugin commands between vundle#begin/end.
@@ -64,5 +65,34 @@ endfunction
 
 autocmd vimenter * call StartVim() | wincmd p
 
-" vim-cmake
-nnoremap <F4> :CMake<cr>
+
+" YCM
+let g:ycm_autoclose_preview_window_after_insertion=1
+
+autocmd BufWritePost * YcmRestartServer
+
+" asyncrun
+let g:asyncrun_open=10
+nnoremap <F10> :call asyncrun#quickfix_toggle(10) <cr>
+"
+" build output directory
+let s:bod='./build'
+
+" cmake
+function! CMake()
+	execute 'AsyncRun cmake -B ' . s:bod
+endfunction
+
+" build project
+function! Build()
+	execute 'AsyncRun make -sC' . s:bod 
+endfunction
+
+" run
+function! Run()
+	execute 'AsyncRun make -sC' . s:bod ' run'
+endfunction
+
+nnoremap <F4> :call CMake() <cr>
+nnoremap <F5> :call Build() <cr>
+nnoremap <F6> :call Run() <cr>
